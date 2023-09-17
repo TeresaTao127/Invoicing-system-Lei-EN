@@ -5,7 +5,6 @@ import ie.futurecollars.invoicing.model.Invoice;
 import java.util.List;
 import java.util.Optional;
 
-
 public class InMemoryDatabase implements Database {
 
   @Override

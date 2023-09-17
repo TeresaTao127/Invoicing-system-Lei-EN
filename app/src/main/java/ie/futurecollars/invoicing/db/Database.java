@@ -1,6 +1,5 @@
 package ie.futurecollars.invoicing.db;
 
-
 import ie.futurecollars.invoicing.model.Invoice;
 import java.util.List;
 import java.util.Optional;
