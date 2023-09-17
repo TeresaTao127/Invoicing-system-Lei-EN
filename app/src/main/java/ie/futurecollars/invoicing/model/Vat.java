@@ -3,9 +3,11 @@ package ie.futurecollars.invoicing.model;
 import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.ToString;
+
 @ToString
 @Getter
 public enum Vat {
+
   VAT_23(23),
 
   VAT_8(8),

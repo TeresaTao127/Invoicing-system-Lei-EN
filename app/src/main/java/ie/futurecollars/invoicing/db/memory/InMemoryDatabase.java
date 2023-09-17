@@ -7,6 +7,7 @@ import java.util.Optional;
 
 
 public class InMemoryDatabase implements Database {
+
   @Override
   public int save(Invoice invoice) {
     return 0;

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Database {
+
   int save(Invoice invoice);
 
   Optional<Invoice> getById(int id);
