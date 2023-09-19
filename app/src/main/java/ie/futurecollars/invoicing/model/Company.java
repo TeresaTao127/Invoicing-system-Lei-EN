@@ -15,4 +15,5 @@ public class Company {
     this.address = address;
     this.name = name;
   }
+
 }
