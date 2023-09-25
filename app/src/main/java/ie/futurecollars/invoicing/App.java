@@ -39,17 +39,15 @@ public class App {
     products.add(new InvoiceEntry("Programming course", new BigDecimal("250"), new BigDecimal("8"), Vat.VAT_8));
     products.add(new InvoiceEntry("Bottle of water", new BigDecimal("2"), new BigDecimal("23"), Vat.VAT_23));
     Invoice invoice = new Invoice(LocalDate.now(), buyer, seller, products);
-//  System.out.println(invoice);
+    System.out.println(invoice);
 
     try {
       ObjectMapper objectMapper = new ObjectMapper();
-//    objectMapper.registerModule(new JavaTimeModule());
       objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
       objectMapper.findAndRegisterModules();
 
       String invoiceAsJson = objectMapper.writeValueAsString(invoice);
-//    System.out.println(invoiceAsJson);
 
       objectMapper.writeValue(new File("invoice.json"), invoice);
 
