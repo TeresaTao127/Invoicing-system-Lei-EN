@@ -4,6 +4,22 @@
 
 package ie.futurecollars.invoicing;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import ie.futurecollars.invoicing.model.Company;
+import ie.futurecollars.invoicing.model.Invoice;
+import ie.futurecollars.invoicing.model.InvoiceEntry;
+import ie.futurecollars.invoicing.model.Vat;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 public class App {
 
   public String getGreeting() {
@@ -13,5 +29,47 @@ public class App {
   public static void main(String[] args) {
 
     System.out.println(new App().getGreeting());
+
+    Company buyer = new Company("123123", "buyer street", "buyer name");
+
+    Company seller = new Company("678678", "seller street", "seller name");
+
+    List<InvoiceEntry> products = new ArrayList<>();
+    products.add(new InvoiceEntry("Programming book", new BigDecimal("10"), new BigDecimal("8"), Vat.VAT_8));
+    products.add(new InvoiceEntry("Programming course", new BigDecimal("250"), new BigDecimal("8"), Vat.VAT_8));
+    products.add(new InvoiceEntry("Bottle of water", new BigDecimal("2"), new BigDecimal("23"), Vat.VAT_23));
+    Invoice invoice = new Invoice(LocalDate.now(), buyer, seller, products);
+//  System.out.println(invoice);
+
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+//    objectMapper.registerModule(new JavaTimeModule());
+      objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+      objectMapper.findAndRegisterModules();
+
+      String invoiceAsJson = objectMapper.writeValueAsString(invoice);
+//    System.out.println(invoiceAsJson);
+
+      objectMapper.writeValue(new File("invoice.json"), invoice);
+
+      Invoice invoiceFromFile = objectMapper.readValue(new File("invoice.json"), Invoice.class);
+      System.out.println(invoiceFromFile);
+
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    try {
+      ObjectMapper objectMapper1 = new ObjectMapper(new YAMLFactory());
+      objectMapper1.registerModule(new JavaTimeModule());
+      objectMapper1.writeValue(new File("invoice.yaml"), invoice);
+      Invoice invoiceFromFile = objectMapper1.readValue(new File("invoice.yaml"), Invoice.class);
+      System.out.println(invoiceFromFile);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
