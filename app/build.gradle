@@ -42,13 +42,6 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.22")
 }
 
-// Apply a specific Java toolchain to ease working on different environments.
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
 application {
     // Define the main class for the application.
     mainClass = 'ie.futurecollars.invoicing.App'
@@ -70,6 +63,7 @@ test {
     finalizedBy jacocoTestReport // report is always generated after tests run
     finalizedBy jacocoTestCoverageVerification
 }
+
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
 }
