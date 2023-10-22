@@ -63,7 +63,6 @@ test {
     finalizedBy jacocoTestReport // report is always generated after tests run
     finalizedBy jacocoTestCoverageVerification
 }
-
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
 }
