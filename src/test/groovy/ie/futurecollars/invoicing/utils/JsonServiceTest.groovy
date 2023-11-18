@@ -1,6 +1,6 @@
 package ie.futurecollars.invoicing.utils
 
-import ie.futurecollars.invoicing.TestHelpers
+import ie.futurecollars.invoicing.helpers.TestHelpers
 import ie.futurecollars.invoicing.model.Invoice
 import spock.lang.Specification
 

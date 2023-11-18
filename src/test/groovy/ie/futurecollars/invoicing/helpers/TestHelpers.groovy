@@ -1,4 +1,4 @@
-package ie.futurecollars.invoicing
+package ie.futurecollars.invoicing.helpers
 
 import ie.futurecollars.invoicing.model.Company
 import ie.futurecollars.invoicing.model.Invoice

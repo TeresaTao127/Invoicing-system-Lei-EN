@@ -6,7 +6,7 @@ import ie.futurecollars.invoicing.db.memory.InMemoryDatabase;
 import ie.futurecollars.invoicing.model.Invoice;
 import spock.lang.Specification;
 
-import static ie.futurecollars.invoicing.TestHelpers.invoice;
+import static ie.futurecollars.invoicing.helpers.TestHelpers.invoice;
 
 
 class InvoiceServiceIntegrationTest extends Specification {
@@ -23,7 +23,7 @@ class InvoiceServiceIntegrationTest extends Specification {
 
     def "should save invoices returning sequential id, invoice should have id set to correct value, get by id returns saved invoice"() {
         when:
-        def ids = invoices.collect({ service.save(it) });
+        def ids = invoices.collect({ service.save(it) })
 
         then:
         ids == (1..invoices.size()).collect()
@@ -44,7 +44,7 @@ class InvoiceServiceIntegrationTest extends Specification {
 
     def "get all returns all invoices in the database, deleted invoice is not returned"() {
         given:
-        invoices.forEach({ service.save(it) });
+        invoices.forEach({ service.save(it) })
 
         expect:
         service.getAll().size() == invoices.size()
@@ -70,29 +70,27 @@ class InvoiceServiceIntegrationTest extends Specification {
         service.getAll().isEmpty()
     }
 
-    def "deleting not existing invoice is not causing any error"() {
+    def "deleting not existing invoice returns Optional.empty()"() {
         expect:
-        service.delete(123);
+        service.delete(123)==Optional.empty()
     }
 
-    def "it's possible to update the invoice"() {
+    def "it's possible to update the invoice, previous invoice is returned"() {
         given:
-        int id = service.save(invoices.get(0));
+        def originalInvoice=invoices.get(0)
+        int id = service.save(originalInvoice);
 
         when:
-        service.update(id, invoices.get(1));
+        def result=service.update(id, invoices.get(1));
 
         then:
         service.getById(id).get() == invoices.get(1)
+        result==Optional.of(originalInvoice)
     }
 
-    def "updating not existing invoice throws exception"() {
-        when:
-        service.update(213, invoices.get(1));
-
-        then:
-        def ex = thrown(IllegalArgumentException);
-        ex.message == "Id 213 does not exist"
+    def "updating not existing invoice returns Optional.empty"() {
+        expect:
+        service.update(213,invoices.get(1))==Optional.empty()
     }
 
 }
