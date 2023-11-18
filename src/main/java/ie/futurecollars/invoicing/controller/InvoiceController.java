@@ -1,8 +1,8 @@
 package ie.futurecollars.invoicing.controller;
 
 import ie.futurecollars.invoicing.model.Invoice;
-import ie.futurecollars.invoicing.service.InvoiceService;
 import ie.futurecollars.invoicing.db.memory.InMemoryDatabase;
+import ie.futurecollars.invoicing.service.InvoiceService;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
