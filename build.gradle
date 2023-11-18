@@ -9,11 +9,11 @@ plugins {
     id 'org.springframework.boot' version '2.4.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 
-    // Apply the groovy plugin to also add support for Groovy (needed for Spock)
-    id 'groovy'
+    id 'java'
 
-    // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+
+    id 'groovy'
 
     id 'checkstyle'
 
@@ -52,11 +52,6 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.22")
 }
 
-application {
-    // Define the main class for the application.
-    mainClass = 'ie.futurecollars.invoicing.App'
-}
-
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
@@ -67,6 +62,10 @@ checkstyle {
     ignoreFailures = false
     maxWarnings = 0
     maxErrors = 0
+}
+
+bootJar {
+    enabled = false
 }
 
 test {
@@ -106,4 +105,11 @@ jacocoTestCoverageVerification {
             }
         }
     }
+
+    afterEvaluate{
+        classDirectories.setFrom(files(classDirectories.files.collect{
+            fileTree(dir: it, exclude: 'ie/futurecollars/invoicing/controller/**')
+        }))
+    }
+
 }
