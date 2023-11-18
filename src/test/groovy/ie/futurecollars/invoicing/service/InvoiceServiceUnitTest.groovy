@@ -3,13 +3,13 @@ package ie.futurecollars.invoicing.service;
 import ie.futurecollars.invoicing.db.Database;
 import spock.lang.Specification;
 
-import static ie.futurecollars.invoicing.TestHelpers.invoice;
+import static ie.futurecollars.invoicing.helpers.TestHelpers.invoice;
 
 
 class InvoiceServiceUnitTest extends Specification {
 
-    private InvoiceService service;
-    private Database database;
+    private InvoiceService service
+    private Database database
 
     def setup() {
         database = Mock();

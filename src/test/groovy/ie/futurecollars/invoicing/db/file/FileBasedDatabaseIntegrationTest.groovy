@@ -2,7 +2,7 @@ package ie.futurecollars.invoicing.db.file
 
 import ie.futurecollars.invoicing.db.AbstractDatabaseTest
 import ie.futurecollars.invoicing.db.Database
-import ie.futurecollars.invoicing.TestHelpers
+import ie.futurecollars.invoicing.helpers.TestHelpers
 import ie.futurecollars.invoicing.utils.FilesService
 import ie.futurecollars.invoicing.utils.JsonService
 
