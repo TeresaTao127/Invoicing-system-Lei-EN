@@ -4,6 +4,7 @@ import ie.futurecollars.invoicing.db.memory.InMemoryDatabase;
 import ie.futurecollars.invoicing.model.Invoice;
 import ie.futurecollars.invoicing.service.InvoiceService;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("invoices")
 public class InvoiceController {
 
-  private InvoiceService invoiceService = new InvoiceService(new InMemoryDatabase());
+  private final InvoiceService invoiceService;
 
+  @Autowired
+  public InvoiceController(InvoiceService invoiceService){
+    this.invoiceService= invoiceService;
+  }
   @GetMapping
   public List<Invoice> getAll() {
     return invoiceService.getAll();
