@@ -15,14 +15,14 @@ import lombok.AllArgsConstructor;
 public class FileBasedDatabase implements Database {
 
   private final Path databasePath;
-  private final IdService idService;
+  private final IdProvider idProvider;
   private final FilesService filesService;
   private final JsonService jsonService;
 
   @Override
   public int save(Invoice invoice) {
     try {
-      invoice.setId(idService.getNextIdAndIncrement());
+      invoice.setId(idProvider.getNextIdAndIncrement());
       filesService.appendLineToFile(databasePath, jsonService.toJson(invoice));
 
       return invoice.getId();
