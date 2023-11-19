@@ -1,6 +1,5 @@
 package ie.futurecollars.invoicing.controller;
 
-import ie.futurecollars.invoicing.db.memory.InMemoryDatabase;
 import ie.futurecollars.invoicing.model.Invoice;
 import ie.futurecollars.invoicing.service.InvoiceService;
 import java.util.List;
@@ -22,9 +21,10 @@ public class InvoiceController {
   private final InvoiceService invoiceService;
 
   @Autowired
-  public InvoiceController(InvoiceService invoiceService){
-    this.invoiceService= invoiceService;
+  public InvoiceController(InvoiceService invoiceService) {
+    this.invoiceService = invoiceService;
   }
+
   @GetMapping
   public List<Invoice> getAll() {
     return invoiceService.getAll();
