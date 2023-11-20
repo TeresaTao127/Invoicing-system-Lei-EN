@@ -83,14 +83,14 @@ public class FileBasedDatabase implements Database {
     try {
       var allInvoices = filesService.readAllLines(databasePath);
 
-      var invoiceExceptDeleted = allInvoices
+      var invoicesExceptDeleted = allInvoices
           .stream()
           .filter(line -> !containsId(line, id))
           .collect(Collectors.toList());
 
-      filesService.writeLinesToFile(databasePath, invoiceExceptDeleted);
+      filesService.writeLinesToFile(databasePath, invoicesExceptDeleted);
 
-      allInvoices.removeAll(invoiceExceptDeleted);
+      allInvoices.removeAll(invoicesExceptDeleted);
       return allInvoices.isEmpty() ? Optional.empty() : Optional.of(jsonService.toObject(allInvoices.get(0), Invoice.class));
 
     } catch (IOException ex) {
