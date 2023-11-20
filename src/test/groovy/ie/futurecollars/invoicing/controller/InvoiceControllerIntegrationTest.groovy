@@ -77,7 +77,7 @@ class InvoiceControllerIntegrationTest extends Specification {
 
         expect:
         mockMvc.perform(
-                get("$ENPOINT/$id")
+                get("$ENDPOINT/$id")
         )
                 .andExpect(status().isNotFound())
         where:
@@ -122,7 +122,7 @@ class InvoiceControllerIntegrationTest extends Specification {
                         .content(jsonService.toJson(updatedInvoice))
                         .contentType(MediaType.APPLICATION_JSON)
         )
-                .andExpect(status().isNotContent())
+                .andExpect(status().isNoContent())
         getInvoiceById(id)==updatedInvoice
     }
 
@@ -165,7 +165,7 @@ class InvoiceControllerIntegrationTest extends Specification {
     }
 
     private List<Invoice> getAllInvoices() {
-        def response = mockMvc.perform(get("$ENDPOINT/$id"))
+        def response = mockMvc.perform(get(ENDPOINT))
                 .andExpect(status().isOk())
                 .andReturn()
                 .response
