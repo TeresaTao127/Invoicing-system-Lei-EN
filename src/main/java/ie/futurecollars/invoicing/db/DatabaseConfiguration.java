@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 public class DatabaseConfiguration {
+
   @Bean
   public IdProvider idProvider(
       FilesService filesService,
