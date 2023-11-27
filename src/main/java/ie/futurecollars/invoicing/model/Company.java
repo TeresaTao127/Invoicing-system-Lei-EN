@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Company {
 
-  private String taxIdentification;
+  private String taxIdentificationNumber;
   private String address;
   private String name;
 
-  public Company(String taxIdentification, String address, String name) {
+  public Company(String taxIdentificationNumber, String address, String name) {
 
-    this.taxIdentification = taxIdentification;
+    this.taxIdentificationNumber = taxIdentificationNumber;
     this.address = address;
     this.name = name;
   }
