@@ -64,7 +64,7 @@ abstract class AbstractDatabaseTest extends Specification {
 
     def "deleting not existing invoice returns optional empty"() {
         expect:
-        database.delete(123) == Optional.empty();
+        database.delete(123) == Optional.empty()
     }
 
     def "it's possible to update the invoice, original invoice is returned"() {
