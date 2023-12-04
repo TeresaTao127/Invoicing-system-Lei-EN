@@ -1,5 +1,6 @@
-package ie.futurecollars.invoicing.controller;
+package ie.futurecollars.invoicing.controller.invoice;
 
+import ie.futurecollars.invoicing.controller.invoice.InvoiceApi;
 import ie.futurecollars.invoicing.model.Invoice;
 import ie.futurecollars.invoicing.service.InvoiceService;
 import java.util.List;
