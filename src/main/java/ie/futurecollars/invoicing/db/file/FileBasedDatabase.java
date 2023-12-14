@@ -25,7 +25,7 @@ public class FileBasedDatabase implements Database {
       invoice.setId(idProvider.getNextIdAndIncrement());
       filesService.appendLineToFile(databasePath, jsonService.toJson(invoice));
 
-      return (int) invoice.getId();
+      return invoice.getId();
     } catch (IOException ex) {
       throw new RuntimeException("Database failed to save invoice", ex);
     }
