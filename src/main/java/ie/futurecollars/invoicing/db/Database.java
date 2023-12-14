@@ -10,21 +10,28 @@ import java.util.function.Predicate;
 
 public interface Database {
 
-  int save(Invoice invoice);
+  long save(Invoice invoice);
 
-  Optional<Invoice> getById(int id);
+  Optional<Invoice> getById(long id);
 
   List<Invoice> getAll();
 
-  Optional<Invoice> update(int id, Invoice updatedInvoice);
+  Optional<Invoice> update(long id, Invoice updatedInvoice);
 
-  Optional<Invoice> delete(int id);
+  Optional<Invoice> delete(long id);
 
-  default BigDecimal visit(Predicate<Invoice> invoicePredicate, Function<InvoiceEntry, BigDecimal> invoiceEntryToValue) {
+  default BigDecimal visit(
+      Predicate<Invoice> invoicePredicate,
+      Function<InvoiceEntry, BigDecimal> invoiceEntryToValue
+  ) {
     return getAll().stream()
         .filter(invoicePredicate)
         .flatMap(i -> i.getEntries().stream())
         .map(invoiceEntryToValue)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
+
+  default void reset() {
+    getAll().forEach(invoice -> delete(invoice.getId()));
   }
 }

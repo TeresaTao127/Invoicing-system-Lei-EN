@@ -8,11 +8,11 @@ logging:
         boot: INFO
     ie:
       futurecollars:
-        invoicing: WARN
+        invoicing: INFO
         invoicing.db: DEBUG
 
 spring:
   profiles:
-    active: sql
+    active: jpa-flyway
   flyway:
-    enabled: true
+    enabled: false

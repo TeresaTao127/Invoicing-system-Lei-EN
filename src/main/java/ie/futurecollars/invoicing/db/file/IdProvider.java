@@ -29,7 +29,7 @@ public class IdProvider {
 
   }
 
-  public int getNextIdAndIncrement() {
+  public long getNextIdAndIncrement() {
     try {
       filesService.writeToFile(idFilePath, String.valueOf(nextId + 1));
       return nextId++;

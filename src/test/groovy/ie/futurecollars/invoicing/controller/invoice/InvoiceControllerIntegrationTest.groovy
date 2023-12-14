@@ -1,4 +1,4 @@
-package ie.futurecollars.invoicing.controller
+package ie.futurecollars.invoicing.controller.invoice
 
 
 import org.springframework.beans.factory.annotation.Autowired

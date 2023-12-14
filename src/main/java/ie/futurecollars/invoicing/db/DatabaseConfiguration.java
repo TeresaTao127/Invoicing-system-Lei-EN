@@ -2,6 +2,8 @@ package ie.futurecollars.invoicing.db;
 
 import ie.futurecollars.invoicing.db.file.FileBasedDatabase;
 import ie.futurecollars.invoicing.db.file.IdProvider;
+import ie.futurecollars.invoicing.db.jpa.InvoiceRepository;
+import ie.futurecollars.invoicing.db.jpa.JpaDatabase;
 import ie.futurecollars.invoicing.db.memory.InMemoryDatabase;
 import ie.futurecollars.invoicing.db.sql.SqlDatabase;
 import ie.futurecollars.invoicing.utils.FilesService;
@@ -56,4 +58,9 @@ public class DatabaseConfiguration {
     return new InMemoryDatabase();
   }
 
+  @Bean
+  @ConditionalOnProperty(name = "invoicing-system.database", havingValue = "jpa")
+  public Database jpaDatabase(InvoiceRepository invoiceRepository) {
+    return new JpaDatabase(invoiceRepository);
+  }
 }

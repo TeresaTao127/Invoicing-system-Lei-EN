@@ -3,3 +3,4 @@ invoicing-system:
   database.directory: db
   database.invoices.file: invoices.txt
   database.id.file: id.txt
+
