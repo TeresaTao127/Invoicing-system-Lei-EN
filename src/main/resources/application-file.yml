@@ -4,3 +4,6 @@ invoicing-system:
   database.invoices.file: invoices.txt
   database.id.file: id.txt
 
+spring:
+  flyway:
+    enabled: false
