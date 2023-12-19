@@ -152,4 +152,5 @@ jacocoTestCoverageVerification {
             fileTree(dir: it, exclude: 'pl/futurecollars/invoicing/InvoiceApplication.class')
         }))
     }
+
 }
