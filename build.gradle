@@ -20,12 +20,15 @@ plugins {
     id 'groovy'
     id 'checkstyle'
     id 'jacoco'
+
 }
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
+
+
 
 dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -40,8 +43,7 @@ dependencies {
     implementation "io.springfox:springfox-swagger-ui:${springFoxUiVersion}"
 
     // Use the awesome Spock testing and specification framework even with Java
-    testImplementation 'org.spockframework:spock-core:2.2-groovy-3.0'
-    testImplementation 'org.spockframework:spock-spring:2.2-groovy-3.0'
+
     testImplementation 'junit:junit:4.13.2'
 
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -55,6 +57,7 @@ dependencies {
 
 
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.h2database:h2:1.4.200'
     runtimeOnly 'org.postgresql:postgresql:42.2.19'
 
@@ -124,4 +127,45 @@ jacocoTestCoverageVerification {
         }))
     }
 
+
+
+    task testWithFileDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'file'
+        systemProperty 'spring.flyway.enabled', 'false'
+
+    }
+
+    task testWithMemoryDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'memory'
+        systemProperty 'spring.flyway.enabled', 'false'
+    }
+
+    task testWithSqlDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'sql'
+    }
+
+    task testWithJpaDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'jpa'
+    }
+
+    task testWithJpaFlywayDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'jpa-flyway'
+    }
+
+    task testWithPostgreSqlDatabase(type: Test) {
+        systemProperty 'spring.profiles.active', 'sql-pg'
+    }
+
+    check.dependsOn testWithFileDatabase
+    check.dependsOn testWithMemoryDatabase
+    check.dependsOn testWithSqlDatabase
+    check.dependsOn testWithJpaDatabase
+    check.dependsOn testWithJpaFlywayDatabase
+
+
+
+    String osName = System.getProperty("os.name").toLowerCase()
+    if (osName.contains("mac")) {
+        check.dependsOn testWithPostgreSqlDatabase
+    }
 }
