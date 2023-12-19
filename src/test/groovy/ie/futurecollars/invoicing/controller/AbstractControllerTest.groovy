@@ -9,6 +9,7 @@ import ie.futurecollars.invoicing.model.Company
 import ie.futurecollars.invoicing.model.Invoice
 import ie.futurecollars.invoicing.service.TaxCalculatorResult
 import ie.futurecollars.invoicing.utils.JsonService
+import org.springframework.test.web.servlet.ResultActions
 import spock.lang.Specification
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
