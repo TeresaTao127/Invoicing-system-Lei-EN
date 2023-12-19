@@ -1,14 +1,8 @@
 package ie.futurecollars.invoicing.controller.invoice
 
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.ResultActions
-import ie.futurecollars.invoicing.model.Invoice
-import ie.futurecollars.invoicing.utils.JsonService
+import ie.futurecollars.invoicing.controller.AbstractControllerTest
 import spock.lang.Specification
 import spock.lang.Unroll;
 
@@ -16,21 +10,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import static ie.futurecollars.invoicing.helpers.TestHelpers.invoice
 
-@AutoConfigureMockMvc
-@SpringBootTest
 @Unroll
-class InvoiceControllerIntegrationTest extends Specification {
-    private static final String ENDPOINT = "/invoices"
-
-    @Autowired
-    private MockMvc mockMvc
-
-    @Autowired
-    private JsonService jsonService
-
-    def setup() {
-        getAllInvoices().each { invoice -> deleteInvoice(invoice.id) }
-    }
+class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
     def "empty array is returned when no invoices were added"() {
         expect:
@@ -38,15 +19,12 @@ class InvoiceControllerIntegrationTest extends Specification {
     }
 
     def "add invoice returns sequential id"() {
-        given:
-        def invoiceAsJson = invoiceAsJson(1)
-
         expect:
-        def firstId = addInvoiceAndReturnId(invoiceAsJson)
-        addInvoiceAndReturnId(invoiceAsJson) == firstId + 1
-        addInvoiceAndReturnId(invoiceAsJson) == firstId + 2
-        addInvoiceAndReturnId(invoiceAsJson) == firstId + 3
-        addInvoiceAndReturnId(invoiceAsJson) == firstId + 4
+        def firstId = addInvoiceAndReturnId(invoice(1))
+        addInvoiceAndReturnId(invoice(2)) == firstId + 1
+        addInvoiceAndReturnId(invoice(3)) == firstId + 2
+        addInvoiceAndReturnId(invoice(4)) == firstId + 3
+        addInvoiceAndReturnId(invoice(5)) == firstId + 4
     }
 
     def "all invoices are returned when getting all invoices"() {
@@ -63,12 +41,12 @@ class InvoiceControllerIntegrationTest extends Specification {
     def "correct invoice is returned when getting by id"() {
         given:
         def expectedInvoices = addUniqueInvoices(5)
-        def verifiedInvoice = expectedInvoices.get(2)
+        def expectedInvoice = expectedInvoices.get(2)
         when:
-        def invoice = getInvoiceById(verifiedInvoice.getId())
+        def invoice = getInvoiceById(expectedInvoice.getId())
 
         then:
-        invoice == verifiedInvoice
+        invoice == expectedInvoice
     }
 
     def "404 is returned when invoice id is not found when getting invoice by id[#id]"() {
@@ -77,7 +55,7 @@ class InvoiceControllerIntegrationTest extends Specification {
 
         expect:
         mockMvc.perform(
-                get("$ENDPOINT/$id")
+                get("$INVOICE_ENDPOINT/$id")
         )
                 .andExpect(status().isNotFound())
         where:
@@ -89,7 +67,7 @@ class InvoiceControllerIntegrationTest extends Specification {
         addUniqueInvoices(11)
         expect:
         mockMvc.perform(
-                delete("$ENDPOINT/$id")
+                delete("$INVOICE_ENDPOINT/$id")
         )
                 .andExpect(status().isNotFound())
         where:
@@ -101,7 +79,7 @@ class InvoiceControllerIntegrationTest extends Specification {
         addUniqueInvoices(11)
         expect:
         mockMvc.perform(
-                put("$ENDPOINT/$id")
+                put("$INVOICE_ENDPOINT/$id")
                     .content(invoiceAsJson(1))
                     .contentType(MediaType.APPLICATION_JSON)
         )
@@ -112,18 +90,21 @@ class InvoiceControllerIntegrationTest extends Specification {
 
     def "invoice date can be modified"(){
         given:
-        def id =addInvoiceAndReturnId(invoiceAsJson(44))
-        def updatedInvoice=invoice(123)
+        def id =addInvoiceAndReturnId(invoice(4))
+        def updatedInvoice=invoice(1)
         updatedInvoice.id=id
 
         expect:
         mockMvc.perform (
-                put("$ENDPOINT/$id")
+                put("$INVOICE_ENDPOINT/$id")
                         .content(jsonService.toJson(updatedInvoice))
                         .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isNoContent())
-        getInvoiceById(id)==updatedInvoice
+
+        def invoiceFromDbAfterUpdate = getInvoiceById(id).toString()
+        def expectedInvoice = updatedInvoice.toString()
+        invoiceFromDbAfterUpdate == expectedInvoice
     }
 
     def "invoice can be deleted"() {
@@ -135,54 +116,4 @@ class InvoiceControllerIntegrationTest extends Specification {
         getAllInvoices().size() == 0
     }
 
-    private ResultActions deleteInvoice(int id) {
-        mockMvc.perform(delete("$ENDPOINT/$id"))
-                .andExpect(status().isNoContent())
-    }
-
-    private int addInvoiceAndReturnId(String invoiceAsJson) {
-        Integer.valueOf(
-                mockMvc.perform(
-                        post(ENDPOINT)
-                                .content(invoiceAsJson)
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                        .andExpect(status().isOk())
-                        .andReturn()
-                        .response
-                        .contentAsString
-        )
-    }
-
-    private Invoice getInvoiceById(int id) {
-        def invoiceAsString = mockMvc.perform(get("$ENDPOINT/$id"))
-                .andExpect(status().isOk())
-                .andReturn()
-                .response
-                .contentAsString
-
-        jsonService.toObject(invoiceAsString, Invoice)
-    }
-
-    private List<Invoice> getAllInvoices() {
-        def response = mockMvc.perform(get(ENDPOINT))
-                .andExpect(status().isOk())
-                .andReturn()
-                .response
-                .contentAsString
-
-        return jsonService.toObject(response, Invoice[])
-    }
-
-    private List<Invoice> addUniqueInvoices(int count) {
-        (1..count).collect { id ->
-            def invoice = invoice(id)
-            invoice.id = addInvoiceAndReturnId(jsonService.toJson(invoice))
-            return invoice
-        }
-    }
-
-    private String invoiceAsJson(int id) {
-        jsonService.toJson(invoice(id))
-    }
 }
