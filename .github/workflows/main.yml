@@ -17,5 +17,5 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Build with gradle
-        run: ./gradlew build
+        run: ./gradlew build -Dprofile=!mongo
 
