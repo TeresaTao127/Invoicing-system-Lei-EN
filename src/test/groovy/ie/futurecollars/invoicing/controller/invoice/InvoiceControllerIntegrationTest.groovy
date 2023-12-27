@@ -3,7 +3,6 @@ package ie.futurecollars.invoicing.controller.invoice
 
 import org.springframework.http.MediaType
 import ie.futurecollars.invoicing.controller.AbstractControllerTest
-import spock.lang.Specification
 import spock.lang.Unroll;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -88,7 +87,7 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
         id << [-100, -2, -1, 0, 12,13,99,102,1000]
     }
 
-    def "invoice date can be modified"(){
+    def "invoice can be modified"(){
         given:
         def id =addInvoiceAndReturnId(invoice(4))
         def updatedInvoice=invoice(1)

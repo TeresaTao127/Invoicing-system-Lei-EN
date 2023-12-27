@@ -10,6 +10,7 @@ buildscript {
     ext {
         lombokVersion = '1.18.22'
         spockVersion = '2.3-groovy-3.0'
+        mongoVersion = '3.12.8'
         springBootVersion = '2.4.2'
         springDependencyManagementVersion = '1.0.11.RELEASE'
         springFoxStarterVersion = '3.0.0'
@@ -17,6 +18,7 @@ buildscript {
         flywayVersion = '7.6.0'
     }
 }
+
 
 
 plugins {
@@ -36,7 +38,7 @@ plugins {
     id 'java'
 }
 
-group = 'pl.futurecollars'
+group = 'ie.futurecollars'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
@@ -83,6 +85,7 @@ dependencies {
 
     implementation "io.springfox:springfox-boot-starter:${springFoxStarterVersion}"
     implementation "io.springfox:springfox-swagger-ui:${springFoxUiVersion}"
+    implementation "org.mongodb:mongo-java-driver:${mongoVersion}"
 
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     runtimeOnly 'org.postgresql:postgresql:42.2.19'
@@ -149,7 +152,10 @@ jacocoTestCoverageVerification {
 
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: 'pl/futurecollars/invoicing/InvoiceApplication.class')
+            fileTree(dir: it, excludes: [
+                    'ie/futurecollars/invoicing/InvoiceApplication.class',
+                    'ie/futurecollars/invoicing/db/mongo/**'
+            ])
         }))
     }
 
