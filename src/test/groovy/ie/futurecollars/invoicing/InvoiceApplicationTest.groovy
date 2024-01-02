@@ -2,7 +2,7 @@ package ie.futurecollars.invoicing
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import ie.futurecollars.invoicing.service.InvoiceService
+import ie.futurecollars.invoicing.service.invoice.InvoiceService
 import spock.lang.Specification
 
 @SpringBootTest

@@ -1,5 +1,6 @@
 package ie.futurecollars.invoicing.helpers
 
+import ie.futurecollars.invoicing.model.Car
 import ie.futurecollars.invoicing.model.Company
 import ie.futurecollars.invoicing.model.Invoice
 import ie.futurecollars.invoicing.model.InvoiceEntry
@@ -26,6 +27,12 @@ class TestHelpers {
                 .netPrice(BigDecimal.valueOf(id * 1000).setScale(2))
                 .vatValue(BigDecimal.valueOf(id * 1000 * 0.08).setScale(2))
                 .vatRate(Vat.VAT_8)
+                .expenseRelatedToCar(id % 2 == 0 ? null :
+                        Car.builder()
+                                .registrationNumber("XYZ")
+                                .personalUse(false)
+                                .build()
+                )
                 .build()
     }
 
@@ -39,4 +46,18 @@ class TestHelpers {
                 .build()
     }
 
+    // resetting is necessary because database query returns ids while we don't know ids in original invoice
+    static Invoice resetIds(Invoice invoice) {
+        invoice.getBuyer().id = null
+        invoice.getSeller().id = null
+        invoice.entries.forEach {
+            it.id = null
+            it.expenseRelatedToCar?.id = null
+        }
+        invoice
+    }
+
+    static List<Invoice> resetIds(List<Invoice> invoices) {
+        invoices.forEach { invoice -> resetIds(invoice) }
+    }
 }

@@ -1,8 +1,7 @@
 package ie.futurecollars.invoicing.controller.invoice;
 
-import ie.futurecollars.invoicing.controller.invoice.InvoiceApi;
 import ie.futurecollars.invoicing.model.Invoice;
-import ie.futurecollars.invoicing.service.InvoiceService;
+import ie.futurecollars.invoicing.service.invoice.InvoiceService;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

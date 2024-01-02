@@ -3,7 +3,8 @@ package ie.futurecollars.invoicing.service;
 
 import ie.futurecollars.invoicing.db.Database;
 import ie.futurecollars.invoicing.db.memory.InMemoryDatabase;
-import ie.futurecollars.invoicing.model.Invoice;
+import ie.futurecollars.invoicing.model.Invoice
+import ie.futurecollars.invoicing.service.invoice.InvoiceService;
 import spock.lang.Specification;
 
 import static ie.futurecollars.invoicing.helpers.TestHelpers.invoice;
