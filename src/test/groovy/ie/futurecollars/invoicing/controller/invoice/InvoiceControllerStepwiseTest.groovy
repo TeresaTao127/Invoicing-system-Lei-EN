@@ -1,36 +1,32 @@
 package ie.futurecollars.invoicing.controller.invoice
 
-import com.mongodb.client.MongoDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.ApplicationContext
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import ie.futurecollars.invoicing.db.Database
 import ie.futurecollars.invoicing.helpers.TestHelpers
 import ie.futurecollars.invoicing.model.Invoice
 import ie.futurecollars.invoicing.utils.JsonService
-import spock.lang.Requires
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
 import java.time.LocalDate
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import static ie.futurecollars.invoicing.helpers.TestHelpers.resetIds
 
 @AutoConfigureMockMvc
 @SpringBootTest
 @Stepwise
 class InvoiceControllerStepwiseTest extends Specification {
-
-    @Autowired
-    private MockMvc mockMvc
-
-    @Autowired
-    private JsonService jsonService;
 
     private final Invoice originalInvoice = TestHelpers.invoice(1)
 
@@ -40,13 +36,23 @@ class InvoiceControllerStepwiseTest extends Specification {
     private int invoiceId
 
     @Autowired
-    private ApplicationContext context
+    private MockMvc mockMvc
 
-    @Requires({ System.getProperty('spring.profiles.active', 'memory').contains("mongo") })
-    def "database is dropped to ensure clean state"() {
+    @Autowired
+    private JsonService jsonService
+
+    @Autowired
+    private Database<Invoice> database
+
+    def "database is reset to ensure clean state"() {
         expect:
-        MongoDatabase mongoDatabase = context.getBean(MongoDatabase)
-        mongoDatabase.drop()
+        database != null
+
+        when:
+        database.reset()
+
+        then:
+        database.getAll().size() == 0
     }
 
     def "empty array is returned when no invoices were added"() {
@@ -60,7 +66,6 @@ class InvoiceControllerStepwiseTest extends Specification {
         then:
         response == "[]"
     }
-
 
     def "add single invoice"() {
         given:
@@ -100,7 +105,7 @@ class InvoiceControllerStepwiseTest extends Specification {
 
         then:
         invoices.size() == 1
-        invoices[0] == expectedInvoice
+        resetIds(invoices[0]) == resetIds(expectedInvoice)
     }
 
     def "invoice is returned correctly when getting by id"() {
@@ -118,7 +123,7 @@ class InvoiceControllerStepwiseTest extends Specification {
         def invoice = jsonService.toObject(response, Invoice)
 
         then:
-        invoice == expectedInvoice
+        resetIds(invoice) == resetIds(expectedInvoice)
     }
 
     def "invoice date can be modified"() {
@@ -151,10 +156,10 @@ class InvoiceControllerStepwiseTest extends Specification {
                 .response
                 .contentAsString
 
-        def invoices = jsonService.toObject(response, Invoice)
+        def invoice = jsonService.toObject(response, Invoice)
 
         then:
-        invoices == expectedInvoice
+        resetIds(invoice) == resetIds(expectedInvoice)
     }
 
     def "invoice can be deleted"() {
@@ -170,4 +175,5 @@ class InvoiceControllerStepwiseTest extends Specification {
         mockMvc.perform(get("/invoices/$invoiceId"))
                 .andExpect(status().isNotFound())
     }
+
 }
