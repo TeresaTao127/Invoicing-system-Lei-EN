@@ -1,4 +1,4 @@
-package ie.futurecollars.invoicing.service;
+package ie.futurecollars.invoicing.service.invoice;
 
 import ie.futurecollars.invoicing.db.Database;
 import ie.futurecollars.invoicing.model.Invoice;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class InvoiceService {
 
-  private final Database database;
+  private final Database<Invoice> database;
 
-  public InvoiceService(Database database) {
+  public InvoiceService(Database<Invoice> database) {
     this.database = database;
   }
 
