@@ -1,13 +1,15 @@
 package ie.futurecollars.invoicing.controller.invoice
 
-
 import org.springframework.http.MediaType
 import ie.futurecollars.invoicing.controller.AbstractControllerTest
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import static ie.futurecollars.invoicing.helpers.TestHelpers.invoice
+import static ie.futurecollars.invoicing.helpers.TestHelpers.resetIds
 
 @Unroll
 class InvoiceControllerIntegrationTest extends AbstractControllerTest {
@@ -30,25 +32,28 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
         given:
         def numberOfInvoices = 3
         def expectedInvoices = addUniqueInvoices(numberOfInvoices)
+
         when:
         def invoices = getAllInvoices()
+
         then:
         invoices.size() == numberOfInvoices
-        invoices == expectedInvoices
+        resetIds(invoices) == resetIds(expectedInvoices)
     }
 
     def "correct invoice is returned when getting by id"() {
         given:
         def expectedInvoices = addUniqueInvoices(5)
         def expectedInvoice = expectedInvoices.get(2)
+
         when:
         def invoice = getInvoiceById(expectedInvoice.getId())
 
         then:
-        invoice == expectedInvoice
+        resetIds(invoice) == resetIds(expectedInvoice)
     }
 
-    def "404 is returned when invoice id is not found when getting invoice by id[#id]"() {
+    def "404 is returned when invoice id is not found when getting invoice by id [#id]"() {
         given:
         addUniqueInvoices(11)
 
@@ -57,6 +62,7 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
                 get("$INVOICE_ENDPOINT/$id")
         )
                 .andExpect(status().isNotFound())
+
         where:
         id << [-100, -2, -1, 0, 168, 1256]
     }
@@ -64,45 +70,49 @@ class InvoiceControllerIntegrationTest extends AbstractControllerTest {
     def "404 is returned when invoice id is not found when deleting invoice [#id]"() {
         given:
         addUniqueInvoices(11)
+
         expect:
         mockMvc.perform(
                 delete("$INVOICE_ENDPOINT/$id")
         )
                 .andExpect(status().isNotFound())
+
         where:
-        id << [-100, -2, -1, 0, 12,13,99,102,1000]
+        id << [-100, -2, -1, 0, 12, 13, 99, 102, 1000]
     }
 
     def "404 is returned when invoice id is not found when updating invoice [#id]"() {
         given:
         addUniqueInvoices(11)
+
         expect:
         mockMvc.perform(
                 put("$INVOICE_ENDPOINT/$id")
-                    .content(invoiceAsJson(1))
-                    .contentType(MediaType.APPLICATION_JSON)
+                        .content(invoiceAsJson(1))
+                        .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isNotFound())
+
         where:
-        id << [-100, -2, -1, 0, 12,13,99,102,1000]
+        id << [-100, -2, -1, 0, 12, 13, 99, 102, 1000]
     }
 
-    def "invoice can be modified"(){
+    def "invoice can be modified"() {
         given:
-        def id =addInvoiceAndReturnId(invoice(4))
-        def updatedInvoice=invoice(1)
-        updatedInvoice.id=id
+        def id = addInvoiceAndReturnId(invoice(4))
+        def updatedInvoice = invoice(1)
+        updatedInvoice.id = id
 
         expect:
-        mockMvc.perform (
+        mockMvc.perform(
                 put("$INVOICE_ENDPOINT/$id")
                         .content(jsonService.toJson(updatedInvoice))
                         .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isNoContent())
 
-        def invoiceFromDbAfterUpdate = getInvoiceById(id).toString()
-        def expectedInvoice = updatedInvoice.toString()
+        def invoiceFromDbAfterUpdate = resetIds(getInvoiceById(id)).toString()
+        def expectedInvoice = resetIds(updatedInvoice).toString()
         invoiceFromDbAfterUpdate == expectedInvoice
     }
 
