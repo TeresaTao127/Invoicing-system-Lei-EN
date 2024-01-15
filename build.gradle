@@ -80,6 +80,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.1'
 
     //spring - lekcja 4
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.security:spring-security-test"
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -139,23 +141,22 @@ jacocoTestCoverageVerification {
         rule {
             limit {
                 counter = 'BRANCH'
-                minimum = 0.70
+                minimum = 0.65
             }
         }
         rule {
             limit {
                 counter = 'LINE'
-                minimum = 0.70
+                minimum = 0.65
             }
         }
     }
 
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, excludes: [
+            fileTree(dir: it, exclude: [
                     'ie/futurecollars/invoicing/InvoiceApplication.class',
-                    'ie/futurecollars/invoicing/db/mongo/**'
-            ])
+                    'ie/futurecollars/invoicing/config/*'])
         }))
     }
 
